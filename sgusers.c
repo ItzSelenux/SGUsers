@@ -37,7 +37,7 @@ for(int i = 1; i < argc; i++)
 	g_signal_connect(window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
 
 	GtkIconTheme *theme = gtk_icon_theme_get_default();
-	GtkIconInfo *info = gtk_icon_theme_lookup_icon(theme, "preferences-system-users", 48, 0);
+	GtkIconInfo *info = gtk_icon_theme_lookup_icon(theme, "cs-user", 48, 0);
 	if (info != NULL) 
 	{
 		GdkPixbuf *icon = gtk_icon_info_load_icon(info, NULL);
@@ -45,14 +45,16 @@ for(int i = 1; i < argc; i++)
 		g_object_unref(icon);
 		g_object_unref(info);
 	}
-
+	//accelerator header
+	GtkAccelGroup *accel_group = gtk_accel_group_new();
+		gtk_window_add_accel_group(GTK_WINDOW(window), accel_group);
 	// Create the header bar
 	GtkWidget *headerbar = gtk_header_bar_new();
 	gtk_header_bar_set_show_close_button(GTK_HEADER_BAR(headerbar), TRUE);
 
 	// Create the button with an icon
 	GtkWidget *button = gtk_menu_button_new();
-	GtkWidget *wicon = gtk_image_new_from_icon_name("preferences-system-users", GTK_ICON_SIZE_BUTTON);
+	GtkWidget *wicon = gtk_image_new_from_icon_name("cs-user", GTK_ICON_SIZE_BUTTON);
 	gtk_container_add(GTK_CONTAINER(button), wicon);
 	gtk_header_bar_pack_start(GTK_HEADER_BAR(headerbar), button);
 
@@ -139,7 +141,15 @@ GtkWidget *grid;
 	g_signal_connect(submenu_item2, "activate", G_CALLBACK(restart_program), pm);
 	g_signal_connect(submenu_item3, "activate", G_CALLBACK(on_submenu_item3_selected), NULL);
 	g_signal_connect(submenu_item4, "activate", G_CALLBACK(on_submenu_item4_selected), NULL);
+
+
+	// Keybinds
 	g_signal_connect(window, "button-press-event", G_CALLBACK(on_button_press), submenu);
+	gtk_widget_add_accelerator(submenu_item1, "activate", accel_group, GDK_KEY_G, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
+	gtk_widget_add_accelerator(submenu_item2, "activate", accel_group, GDK_KEY_R, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
+	gtk_widget_add_accelerator(submenu_item4, "activate", accel_group, GDK_KEY_R, GDK_CONTROL_MASK | GDK_SHIFT_MASK, GTK_ACCEL_VISIBLE);
+
+	gtk_widget_add_accelerator(button_add, "activate", accel_group, GDK_KEY_A, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
 	
 	gtk_window_set_position(GTK_WINDOW(window), GTK_WIN_POS_CENTER);
 	gtk_widget_show_all(window);

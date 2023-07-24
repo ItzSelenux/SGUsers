@@ -65,9 +65,10 @@ void edit_user(GtkWidget *widget, gpointer data)
 										 "Cancel",
 										 GTK_RESPONSE_CANCEL,
 										 NULL);
+	gtk_window_set_position(GTK_WINDOW(dialog), GTK_WIN_POS_CENTER);
 
 	GtkIconTheme *theme = gtk_icon_theme_get_default();
-	GtkIconInfo *info = gtk_icon_theme_lookup_icon(theme, "preferences-system-users", 48, 0);
+	GtkIconInfo *info = gtk_icon_theme_lookup_icon(theme, "cs-user", 48, 0);
 	if (info != NULL)
 	{
 		GdkPixbuf *icon = gtk_icon_info_load_icon(info, NULL);
@@ -179,7 +180,16 @@ void edit_user(GtkWidget *widget, gpointer data)
 												GTK_MESSAGE_QUESTION,
 												GTK_BUTTONS_YES_NO,
 												"Are you sure you want to delete the user?");
-
+	GtkIconTheme *theme = gtk_icon_theme_get_default();
+	GtkIconInfo *info = gtk_icon_theme_lookup_icon(theme, "list-remove-user", 48, 0);
+	gtk_window_set_position(GTK_WINDOW(confirm_dialog), GTK_WIN_POS_CENTER);
+	if (info != NULL)
+	{
+		GdkPixbuf *icon = gtk_icon_info_load_icon(info, NULL);
+		gtk_window_set_icon(GTK_WINDOW(confirm_dialog), icon);
+		g_object_unref(icon);
+		g_object_unref(info);
+	}
 		gint confirm_response = gtk_dialog_run(GTK_DIALOG(confirm_dialog));
 		gtk_widget_destroy(confirm_dialog);
 
@@ -202,7 +212,16 @@ void edit_user(GtkWidget *widget, gpointer data)
 													"Change", GTK_RESPONSE_ACCEPT,
 													"Cancel", GTK_RESPONSE_CANCEL,
 													NULL);
-
+	GtkIconTheme *theme = gtk_icon_theme_get_default();
+	GtkIconInfo *info = gtk_icon_theme_lookup_icon(theme, "dialog-password", 48, 0);
+	gtk_window_set_position(GTK_WINDOW(password_dialog), GTK_WIN_POS_CENTER);
+	if (info != NULL)
+	{
+		GdkPixbuf *icon = gtk_icon_info_load_icon(info, NULL);
+		gtk_window_set_icon(GTK_WINDOW(password_dialog), icon);
+		g_object_unref(icon);
+		g_object_unref(info);
+	}
 		GtkWidget *content_area = gtk_dialog_get_content_area(GTK_DIALOG(password_dialog));
 		GtkWidget *password_label = gtk_label_new("Enter new password:");
 		GtkWidget *password_entry = gtk_entry_new();
@@ -239,7 +258,16 @@ void add_user(GtkWidget *widget, gpointer data)
 										 "Cancel",
 										 GTK_RESPONSE_CANCEL,
 										 NULL);
-
+	GtkIconTheme *theme = gtk_icon_theme_get_default();
+	GtkIconInfo *info = gtk_icon_theme_lookup_icon(theme, "list-add-user", 48, 0);
+	gtk_window_set_position(GTK_WINDOW(dialog), GTK_WIN_POS_CENTER);
+	if (info != NULL)
+	{
+		GdkPixbuf *icon = gtk_icon_info_load_icon(info, NULL);
+		gtk_window_set_icon(GTK_WINDOW(dialog), icon);
+		g_object_unref(icon);
+		g_object_unref(info);
+	}
 	GtkWidget *content_area = gtk_dialog_get_content_area(GTK_DIALOG(dialog));
 
 	GtkWidget *label_name = gtk_label_new("Username:");
@@ -324,7 +352,7 @@ void on_submenu_item3_selected(GtkMenuItem *menuitem, gpointer userdata)
 	gtk_about_dialog_set_website(GTK_ABOUT_DIALOG(dialog), "https://sgde.github.io/sgusers");
 	gtk_about_dialog_set_website_label(GTK_ABOUT_DIALOG(dialog), "Project WebSite");
 	gtk_about_dialog_set_license_type(GTK_ABOUT_DIALOG(dialog),GTK_LICENSE_GPL_3_0);
-	gtk_about_dialog_set_logo_icon_name(GTK_ABOUT_DIALOG(dialog),"preferences-system-users");
+	gtk_about_dialog_set_logo_icon_name(GTK_ABOUT_DIALOG(dialog),"cs-user");
 	gtk_dialog_run(GTK_DIALOG(dialog));
 	gtk_widget_destroy(dialog);
 }
@@ -380,7 +408,9 @@ void on_submenu_item1_selected(GtkWidget *widget, gpointer data)
 	gtk_window_set_title(GTK_WINDOW(window), "System's Groups - SGrandr");
 	gtk_window_set_default_size(GTK_WINDOW(window), 222, 444);
 	GtkIconTheme *theme = gtk_icon_theme_get_default();
-	GtkIconInfo *info = gtk_icon_theme_lookup_icon(theme, "preferences-system-users", 48, 0);
+	GtkIconInfo *info = gtk_icon_theme_lookup_icon(theme, "user-group-properties", 48, 0);
+	gtk_window_set_position(GTK_WINDOW(window), GTK_WIN_POS_CENTER);
+
 	if (info != NULL) 
 	{
 		GdkPixbuf *icon = gtk_icon_info_load_icon(info, NULL);
@@ -419,33 +449,41 @@ void on_submenu_item1_selected(GtkWidget *widget, gpointer data)
 
 void on_submenu_item4_selected(GtkWidget *widget, gpointer data)
 {	
-	GtkWidget *dialog;
-	GtkWidget *password_dialog;
-		password_dialog = gtk_dialog_new_with_buttons("Change Password",
-													GTK_WINDOW(dialog),
-													GTK_DIALOG_MODAL,
-													"Change", GTK_RESPONSE_ACCEPT,
-													"Cancel", GTK_RESPONSE_CANCEL,
-													NULL);
+	GtkWidget *rdialog;
+	rdialog = gtk_dialog_new_with_buttons("Root Account",
+										  GTK_WINDOW(gtk_widget_get_toplevel(widget)), // Cambiar GTK_WINDOW(rdialog) a GTK_WINDOW(gtk_widget_get_toplevel(widget))
+										  GTK_DIALOG_MODAL,
+										  "Change", GTK_RESPONSE_ACCEPT,
+										  "Cancel", GTK_RESPONSE_CANCEL,
+										  NULL);
+	GtkIconTheme *theme = gtk_icon_theme_get_default();
+	GtkIconInfo *info = gtk_icon_theme_lookup_icon(theme, "dialog-password", 48, 0);
+	gtk_window_set_position(GTK_WINDOW(rdialog), GTK_WIN_POS_CENTER);
+	if (info != NULL)
+	{
+		GdkPixbuf *icon = gtk_icon_info_load_icon(info, NULL);
+		gtk_window_set_icon(GTK_WINDOW(rdialog), icon);
+		g_object_unref(icon);
+		g_object_unref(info);
+	}
+	
+	GtkWidget *content_area = gtk_dialog_get_content_area(GTK_DIALOG(rdialog));
+	GtkWidget *password_label = gtk_label_new("Change root password (left empty to disable):");
+	GtkWidget *password_entry = gtk_entry_new();
+	gtk_entry_set_visibility(GTK_ENTRY(password_entry), FALSE);
+	gtk_container_add(GTK_CONTAINER(content_area), password_label);
+	gtk_container_add(GTK_CONTAINER(content_area), password_entry);
+	gtk_widget_show_all(rdialog);
 
-		GtkWidget *content_area = gtk_dialog_get_content_area(GTK_DIALOG(password_dialog));
-		GtkWidget *password_label = gtk_label_new("Enter new password:");
-		GtkWidget *password_entry = gtk_entry_new();
-		gtk_entry_set_visibility(GTK_ENTRY(password_entry), FALSE);
-		gtk_container_add(GTK_CONTAINER(content_area), password_label);
-		gtk_container_add(GTK_CONTAINER(content_area), password_entry);
-		gtk_widget_show_all(password_dialog);
+	gint password_response = gtk_dialog_run(GTK_DIALOG(rdialog));
+	if (password_response == GTK_RESPONSE_ACCEPT)
+	{
+		const gchar *new_password = gtk_entry_get_text(GTK_ENTRY(password_entry));
+		gchar command[4096];
+		snprintf(command, sizeof(command), "echo 'root:%s' | chpasswd", new_password);
+		system(command);
+		printf("%s\n", command);
+	}
 
-		gint password_response = gtk_dialog_run(GTK_DIALOG(password_dialog));
-		if (password_response == GTK_RESPONSE_ACCEPT)
-		{
-			const gchar *new_password = gtk_entry_get_text(GTK_ENTRY(password_entry));
-			gchar command[4096];
-			snprintf(command, sizeof(command), "echo 'root:%s' | chpasswd", new_password);
-			system(command);
-			printf("%s\n", command);
-		}
-
-
-		gtk_widget_destroy(password_dialog);
+	gtk_widget_destroy(rdialog); // Agregar esta línea para destruir el diálogo después de usarlo
 }
