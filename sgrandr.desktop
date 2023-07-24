@@ -1,0 +1,15 @@
+[Desktop Entry]
+Name=User Management
+Comment=Manage system users
+Exec=pkexec env DISPLAY=$DISPLAY XAUTHORITY=$XAUTHORITY dbus-launch sgusers
+Icon=preferences-system-users
+Terminal=false
+Type=Application
+Categories=GTK;Settings;SystemSettings;
+Keywords=screen;display;tv;extend;projector;xrandr;refresh rate;position;enable;disable;custom;
+X-AppStream-Ignore=true
+Actions=Option2;
+
+[Desktop Action Option2]
+Name=Add a custom resolution
+Exec=sgrandr-cr

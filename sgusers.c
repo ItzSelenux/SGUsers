@@ -68,12 +68,14 @@ for(int i = 1; i < argc; i++)
 
 	GtkWidget *submenu_item1 = gtk_menu_item_new_with_label("See system's groups list");
 	GtkWidget *submenu_item2 = gtk_menu_item_new_with_label("Reload Program");
+	GtkWidget *submenu_item4 = gtk_menu_item_new_with_label("Manage root account");
 	GtkWidget *submenu_item3 = gtk_menu_item_new_with_label("About");
 
 
 	// Add the submenu items to the submenu
 	gtk_menu_shell_append(GTK_MENU_SHELL(submenu), submenu_item1);
 	gtk_menu_shell_append(GTK_MENU_SHELL(submenu), submenu_item2);
+	gtk_menu_shell_append(GTK_MENU_SHELL(submenu), submenu_item4);
 	gtk_menu_shell_append(GTK_MENU_SHELL(submenu), submenu_item3);
 
 	// Show all the submenu items
@@ -136,6 +138,8 @@ GtkWidget *grid;
 	g_signal_connect(submenu_item1, "activate", G_CALLBACK(on_submenu_item1_selected),  group_array);
 	g_signal_connect(submenu_item2, "activate", G_CALLBACK(restart_program), pm);
 	g_signal_connect(submenu_item3, "activate", G_CALLBACK(on_submenu_item3_selected), NULL);
+	g_signal_connect(submenu_item4, "activate", G_CALLBACK(on_submenu_item4_selected), NULL);
+	g_signal_connect(window, "button-press-event", G_CALLBACK(on_button_press), submenu);
 	
 	gtk_window_set_position(GTK_WINDOW(window), GTK_WIN_POS_CENTER);
 	gtk_widget_show_all(window);
