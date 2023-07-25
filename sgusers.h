@@ -23,6 +23,85 @@ typedef struct
 	char email[ML];
 }UserData;
 
+
+
+
+static gboolean is_valid_char_ws(gunichar ch) {
+    return (g_unichar_isalnum(ch) || ch == '_') && (g_unichar_islower(ch));
+}
+
+static void on_entry_changed_ws(GtkEditable *editable, gpointer user_data) {
+    const gchar *text = gtk_entry_get_text(GTK_ENTRY(editable));
+    gchar *new_text = g_strdup(text);
+    gint i, j;
+    gboolean last_char_space = FALSE;
+
+    for (i = 0, j = 0; text[i]; i++) {
+        if (is_valid_char_ws(text[i])) {
+            new_text[j] = text[i];
+            last_char_space = FALSE;
+            j++;
+        } else if (!last_char_space) {
+            new_text[j] = ' ';
+            last_char_space = TRUE;
+            j++;
+        }
+    }
+
+    new_text[j] = '\0';
+
+    if (strcmp(text, new_text) != 0) {
+        gtk_entry_set_text(GTK_ENTRY(editable), new_text);
+    }
+
+    g_free(new_text);
+}
+
+
+static gboolean is_valid_char(gunichar ch) {
+	return (g_unichar_isalnum(ch) || ch == '_') && (g_unichar_islower(ch));
+}
+
+static void on_entry_changed(GtkEditable *editable, gpointer user_data) {
+	const gchar *text = gtk_entry_get_text(GTK_ENTRY(editable));
+	GString *new_text = g_string_new("");
+	for (gint i = 0; text[i]; i++)
+	{
+		gunichar ch = g_utf8_get_char(&text[i]);
+		if (is_valid_char(ch))
+		{
+			new_text = g_string_append_unichar(new_text, ch);
+		}
+	}
+	if (strcmp(text, new_text->str) != 0)
+	{
+		gtk_entry_set_text(GTK_ENTRY(editable), new_text->str);
+	}
+	g_string_free(new_text, TRUE);
+}
+
+static gboolean is_valid_char_passwd(gunichar ch) {
+	return (g_unichar_isalnum(ch) || ch == '_') && (g_unichar_islower(ch) || g_unichar_isdigit(ch));
+}
+
+static void on_entry_changed_passwd(GtkEditable *editable, gpointer user_data) {
+	const gchar *text = gtk_entry_get_text(GTK_ENTRY(editable));
+	GString *new_text = g_string_new("");
+	for (gint i = 0; text[i]; i++)
+	{
+		gunichar ch = g_utf8_get_char(&text[i]);
+		if (is_valid_char_passwd(ch))
+		{
+			new_text = g_string_append_unichar(new_text, ch);
+		}
+	}
+	if (strcmp(text, new_text->str) != 0)
+	{
+		gtk_entry_set_text(GTK_ENTRY(editable), new_text->str);
+	}
+	g_string_free(new_text, TRUE);
+}
+
 void uie_savedata(GtkWidget *button, gpointer data)
 {
 	// Cast the data pointer to the correct types
@@ -323,7 +402,8 @@ void edit_user(GtkWidget *widget, gpointer data)
 		groups_buffer[strcspn(groups_buffer, "\n")] = '\0';
 		gtk_entry_set_text(GTK_ENTRY(entry_groups), groups_buffer);
 	}
-
+	g_signal_connect(entry, "changed", G_CALLBACK(on_entry_changed), NULL);
+	g_signal_connect(entry_groups, "changed", G_CALLBACK(on_entry_changed_ws), NULL);
 	gtk_widget_show_all(dialog);
 
 	gint response = gtk_dialog_run(GTK_DIALOG(dialog));
@@ -393,7 +473,7 @@ void edit_user(GtkWidget *widget, gpointer data)
 	}
 	else if (response == GTK_RESPONSE_NO)
 	{
-		GtkWidget *confirm_dialog;
+	GtkWidget *confirm_dialog;
 		confirm_dialog = gtk_message_dialog_new(GTK_WINDOW(dialog),
 												GTK_DIALOG_MODAL,
 												GTK_MESSAGE_QUESTION,
@@ -448,18 +528,29 @@ void edit_user(GtkWidget *widget, gpointer data)
 		gtk_container_add(GTK_CONTAINER(content_area), password_label);
 		gtk_container_add(GTK_CONTAINER(content_area), password_entry);
 		gtk_widget_show_all(password_dialog);
-
+		g_signal_connect(password_entry, "changed", G_CALLBACK(on_entry_changed_passwd), NULL);
 		gint password_response = gtk_dialog_run(GTK_DIALOG(password_dialog));
 		if (password_response == GTK_RESPONSE_ACCEPT)
 		{
+			GtkWidget *confirm_dialog;
+	confirm_dialog = gtk_message_dialog_new(GTK_WINDOW(dialog),
+										   GTK_DIALOG_MODAL,
+										   GTK_MESSAGE_QUESTION,
+										   GTK_BUTTONS_YES_NO,
+										   "Are you sure you want to change the password?");
+	gtk_window_set_position(GTK_WINDOW(confirm_dialog), GTK_WIN_POS_CENTER);
+
+	gint confirm_response = gtk_dialog_run(GTK_DIALOG(confirm_dialog));
+	gtk_widget_destroy(confirm_dialog);
+
+	if (confirm_response == GTK_RESPONSE_YES)
+	{
 			const gchar *new_password = gtk_entry_get_text(GTK_ENTRY(password_entry));
 			gchar command[ML];
 			snprintf(command, sizeof(command), "echo '%s:%s' | chpasswd", old_username, new_password);
 			system(command);
-			printf("%s\n", command);
 		}
-
-
+		}
 		gtk_widget_destroy(password_dialog);
 	}
 	gtk_widget_destroy(dialog);
@@ -511,7 +602,9 @@ void add_user(GtkWidget *widget, gpointer data)
 	gtk_container_add(GTK_CONTAINER(content_area), entry_passwd);
 	gtk_entry_set_placeholder_text(GTK_ENTRY(entry_passwd), "Password");
 	gtk_entry_set_visibility(GTK_ENTRY(entry_passwd), FALSE);
-
+	g_signal_connect(entry_passwd, "changed", G_CALLBACK(on_entry_changed_passwd), NULL);
+	g_signal_connect(entry_name, "changed", G_CALLBACK(on_entry_changed), NULL);
+	g_signal_connect(entry_groups, "changed", G_CALLBACK(on_entry_changed_ws), NULL);
 	gtk_widget_show_all(dialog);
 
 	gint response = gtk_dialog_run(GTK_DIALOG(dialog));
@@ -541,7 +634,7 @@ if (response == GTK_RESPONSE_ACCEPT)
 	if (strcmp(new_username, "") != 0)
 	{
 		char command[ML];
-		if (strcmp(modified_groups, "") != 0)
+		if (strcmp(modified_groups, "") == 0 || strcmp(modified_groups, " ") == 0)
 		{
 			snprintf(command, sizeof(command), "useradd -m -G %s %s", modified_groups, new_username);
 		}
@@ -557,7 +650,6 @@ if (response == GTK_RESPONSE_ACCEPT)
 		{
 			snprintf(command, sizeof(command), "echo '%s:%s' | chpasswd", new_username, new_passwd);
 			system(command);
-			printf("%s\n", command);
 		}
 		else
 		{
@@ -701,23 +793,35 @@ void on_submenu_item4_selected(GtkWidget *widget, gpointer data)
 		g_object_unref(icon);
 		g_object_unref(info);
 	}
-	
+
 	GtkWidget *content_area = gtk_dialog_get_content_area(GTK_DIALOG(rdialog));
 	GtkWidget *password_label = gtk_label_new("Change root password (left empty to disable):");
 	GtkWidget *password_entry = gtk_entry_new();
 	gtk_entry_set_visibility(GTK_ENTRY(password_entry), FALSE);
 	gtk_container_add(GTK_CONTAINER(content_area), password_label);
 	gtk_container_add(GTK_CONTAINER(content_area), password_entry);
+	g_signal_connect(password_entry, "changed", G_CALLBACK(on_entry_changed_passwd), NULL);
 	gtk_widget_show_all(rdialog);
 
 	gint password_response = gtk_dialog_run(GTK_DIALOG(rdialog));
 	if (password_response == GTK_RESPONSE_ACCEPT)
 	{
-		const gchar *new_password = gtk_entry_get_text(GTK_ENTRY(password_entry));
-		gchar command[ML];
-		snprintf(command, sizeof(command), "echo 'root:%s' | chpasswd", new_password);
-		system(command);
-		printf("%s\n", command);
+		// Show confirmation dialog
+		GtkWidget *confirmation_dialog = gtk_message_dialog_new(GTK_WINDOW(rdialog),
+															  GTK_DIALOG_MODAL,
+															  GTK_MESSAGE_QUESTION,
+															  GTK_BUTTONS_OK_CANCEL,
+															  "Are you sure you want to change the root password?");
+		gint confirmation_response = gtk_dialog_run(GTK_DIALOG(confirmation_dialog));
+		gtk_widget_destroy(confirmation_dialog);
+
+		if (confirmation_response == GTK_RESPONSE_OK)
+		{
+			const gchar *new_password = gtk_entry_get_text(GTK_ENTRY(password_entry));
+			gchar command[ML];
+			snprintf(command, sizeof(command), "echo 'root:%s' | chpasswd", new_password);
+			system(command);
+		}
 	}
 
 	gtk_widget_destroy(rdialog);
