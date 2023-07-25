@@ -231,6 +231,7 @@ GtkWidget *grid;
 	// Keybinds
 	g_signal_connect(window, "button-press-event", G_CALLBACK(on_button_press), submenu);
 	gtk_widget_add_accelerator(submenu_item1, "activate", accel_group, GDK_KEY_P, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
+	gtk_widget_add_accelerator(ApplyBTN, "activate", accel_group, GDK_KEY_S, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
 	//gtk_widget_add_accelerator(submenu_item2, "activate", accel_group, GDK_KEY_R, GDK_CONTROL_MASK, GTK_ACCEL_VISIBLE);
 
 	gtk_window_set_position(GTK_WINDOW(window), GTK_WIN_POS_CENTER);
