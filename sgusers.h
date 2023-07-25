@@ -7,11 +7,206 @@
 #include <pwd.h>
 #include <glib.h>
 #include <ctype.h>
+#define ML 1024
+char *argvusername[ML];
 char *pm;
+char selected_photo_path[ML] = "";
+
+
+
+typedef struct
+{
+	char fname[ML];
+	char office[ML];
+	char phone[ML];
+	char officephone[ML];
+	char email[ML];
+}UserData;
+
+void uie_savedata(GtkWidget *button, gpointer data)
+{
+	// Cast the data pointer to the correct types
+	GtkWidget *fname_entry = (GtkWidget *)data;
+	GtkWidget *phone_entry = (GtkWidget *)g_object_get_data(G_OBJECT(fname_entry), "phone_entry");
+	GtkWidget *email_entry = (GtkWidget *)g_object_get_data(G_OBJECT(fname_entry), "email_entry");
+	GtkWidget *office_entry = (GtkWidget *)g_object_get_data(G_OBJECT(fname_entry), "office_entry");
+	GtkWidget *ofn_entry = (GtkWidget *)g_object_get_data(G_OBJECT(fname_entry), "ofn_entry");
+	// Get the text from the entries
+	const char *fname = gtk_entry_get_text(GTK_ENTRY(fname_entry));
+	const char *phone = gtk_entry_get_text(GTK_ENTRY(phone_entry));
+	const char *email = gtk_entry_get_text(GTK_ENTRY(email_entry));
+	const char *office = gtk_entry_get_text(GTK_ENTRY(office_entry));
+	const char *ofn = gtk_entry_get_text(GTK_ENTRY(ofn_entry));
+
+	char uie_savecmd[ML];
+
+	if (strlen(selected_photo_path) == 0)
+	{
+	printf("profile picture not changed\n");
+	}
+	else 
+	{
+		  // Copy the file to /home/*argvuser/.face
+		char destination[256];
+		sprintf(destination, "/home/%s/.face", *argvusername); // Assuming argv[1] contains the username
+
+		FILE *src_file, *dest_file;
+		src_file = fopen(selected_photo_path, "rb");
+		dest_file = fopen(destination, "wb");
+
+		if (src_file == NULL || dest_file == NULL)
+		{
+			printf("Error opening files.\n");
+		}
+
+		char buffer[1024];
+		size_t bytesRead;
+
+		while ((bytesRead = fread(buffer, 1, sizeof(buffer), src_file)) > 0)
+		{
+			fwrite(buffer, 1, bytesRead, dest_file);
+		}
+
+		fclose(src_file);
+		fclose(dest_file);
+
+		printf("File copied successfully to %s\n", destination);
+	}
+
+	snprintf(uie_savecmd, sizeof(uie_savecmd), "usermod -c \"%s,%s,%s,%s,%s\" %s", fname, phone, email, office, ofn, *argvusername);
+	g_print("\n");
+
+	system(uie_savecmd);
+	printf("%s\n", uie_savecmd);
+
+	g_print("First Name: %s\n", fname);
+	g_print("Phone: %s\n", phone);
+	g_print("Email: %s\n", email);
+	g_print("Office: %s\n", office);
+	g_print("Office Number: %s\n", ofn);
+	
+}
+
+
+void extractUserData(UserData* data, const char* username)
+{
+	char command[ML];
+	FILE* pipe;
+	char buffer[ML];
+
+	sprintf(command, "grep -e '%s' /etc/passwd | cut -d ':' -f 5", username);
+
+	pipe = popen(command, "r");
+	if (pipe == NULL)
+	{
+		printf("Error executing command.\n");
+		return;
+	}
+
+	fgets(buffer, sizeof(buffer), pipe);
+	pclose(pipe);
+
+	char* token;
+	int field = 1;
+	token = strtok(buffer, ",");
+
+	while (token != NULL)
+	{
+		size_t token_len = strcspn(token, "\r\n"); 
+		token[token_len] = '\0';
+
+		switch (field)
+		{
+			case 1:
+				strcpy(data->fname, token);
+				break;
+			case 2:
+				strcpy(data->office, token);
+				break;
+			case 3:
+				strcpy(data->phone, token);
+				break;
+			case 4:
+				strcpy(data->officephone, token);
+				break;
+			case 5:
+				strcpy(data->email, token);
+				break;
+			default:
+				break;
+		}
+
+		token = strtok(NULL, ",");
+		field++;
+	}
+}
+
+void get_username(char** argvusername)
+{
+	FILE *fp;
+	char buffer[128];
+	fp = popen("id 1000 | cut -d'(' -f2 | cut -d')' -f1", "r");
+	if (fp == NULL)
+	{
+		printf("Error while trying to catch user, you need to specify a user in the argv.\n");
+		return;
+	}
+	if (fgets(buffer, sizeof(buffer), fp) != NULL)
+	{
+		size_t len = strlen(buffer);
+		if (len > 0 && buffer[len - 1] == '\n')
+		{
+			buffer[len - 1] = '\0';
+		}
+		*argvusername = (char*)malloc(strlen(buffer) + 1);
+		strcpy(*argvusername, buffer);
+	}
+	pclose(fp);
+}
+
+void on_pfimage_clicked(GtkButton *button, gpointer data)
+{
+	GtkWidget *dialog = gtk_file_chooser_dialog_new("Select an image",
+													GTK_WINDOW(data),
+													GTK_FILE_CHOOSER_ACTION_OPEN,
+													"_Cancel",
+													GTK_RESPONSE_CANCEL,
+													"_Open",
+													GTK_RESPONSE_ACCEPT,
+													NULL);
+
+
+	GtkFileFilter *filter = gtk_file_filter_new();
+	gtk_file_filter_add_mime_type(filter, "image/*");
+	gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(dialog), filter);
+
+	gint response = gtk_dialog_run(GTK_DIALOG(dialog));
+	if (response == GTK_RESPONSE_ACCEPT)
+	{
+
+		char *filename = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dialog));
+
+ 
+		strncpy(selected_photo_path, filename, sizeof(selected_photo_path) - 1);
+		selected_photo_path[sizeof(selected_photo_path) - 1] = '\0';
+
+		GdkPixbuf *pixbuf = gdk_pixbuf_new_from_file(selected_photo_path, NULL);
+
+		GdkPixbuf *resized_pixbuf = gdk_pixbuf_scale_simple(pixbuf, 64, 64, GDK_INTERP_BILINEAR);
+		g_object_unref(pixbuf);
+
+		GtkWidget *image = gtk_image_new_from_pixbuf(resized_pixbuf);
+		gtk_button_set_image(GTK_BUTTON(data), image);
+	g_object_unref(resized_pixbuf);
+	g_free(filename);
+	}
+	gtk_widget_destroy(dialog);
+}
 
 gboolean on_button_press(GtkWidget *widget, GdkEventButton *event, gpointer data)
 {
-	if (event->type == GDK_BUTTON_PRESS && event->button == 3) {
+	if (event->type == GDK_BUTTON_PRESS && event->button == 3)
+	{
 		GtkWidget *submenu = GTK_WIDGET(data);
 		gtk_menu_popup_at_pointer(GTK_MENU(submenu), NULL);
 		return TRUE;
@@ -42,6 +237,34 @@ void restart_program(GtkWidget *widget, gpointer data)
 	char *args[] = {pm, NULL};
 	execvp(args[0], args);
 }
+
+
+void uie(GtkWidget *widget, gpointer data)
+{
+	const char *old_username = (const char *)data;
+	char* path1 = "/usr/bin/sgusers-uie";
+	char* path2 = "sgusers-uie";
+	char command[100];
+
+	snprintf(command, sizeof(command), "%s %s", "/usr/bin/sgusers-uie", old_username);
+	
+	if (access(command, X_OK) == 0)
+	{
+		printf("executing %s\n", command);
+		system(command);
+	}
+	else if (access("sgusers-uie", X_OK) == 0)
+	{
+		snprintf(command, sizeof(command), "%s %s", "sgusers-uie", old_username);
+		printf("executing %s\n", command);
+		system(command);
+	}
+	else 
+	{
+		printf("Error: can't load sgusers-uie, please reinstall this program\n");
+	}
+}
+
 
 
 void edit_user(GtkWidget *widget, gpointer data)
@@ -90,7 +313,7 @@ void edit_user(GtkWidget *widget, gpointer data)
 	gtk_container_add(GTK_CONTAINER(content_area), entry_groups);
 
 	// Get the current user's groups and set them in the entry
-	char groups_buffer[4096];
+	char groups_buffer[ML];
 	snprintf(groups_buffer, sizeof(groups_buffer), "groups %s", old_username);
 	FILE *groups_pipe = popen(groups_buffer, "r");
 	if (groups_pipe) 
@@ -110,7 +333,7 @@ void edit_user(GtkWidget *widget, gpointer data)
 		if (strcmp(new_username, "") != 0)
 		{
 
-			char groupquery[4096];
+			char groupquery[ML];
 
 			snprintf(groupquery, sizeof(groupquery), "groups %s", old_username);
 			FILE *group_pipe = popen(groupquery, "r");
@@ -119,7 +342,7 @@ void edit_user(GtkWidget *widget, gpointer data)
 				perror("Failed to fetch user groups");
 			}
 
-			char oldusergroups[4096];
+			char oldusergroups[ML];
 			fgets(oldusergroups, sizeof(oldusergroups), group_pipe);
 			pclose(group_pipe);
 
@@ -140,13 +363,13 @@ void edit_user(GtkWidget *widget, gpointer data)
 				p++;
 			}
 
-			char remove_from_all_groups_command[4096];
+			char remove_from_all_groups_command[ML];
 			snprintf(remove_from_all_groups_command, sizeof(remove_from_all_groups_command), "usermod -r -G %s %s", oldusergroups, old_username);
 				system(remove_from_all_groups_command);
 				printf("%s\n", remove_from_all_groups_command);
 	
 			// Rename the user
-			char rename_command[4096];
+			char rename_command[ML];
 			snprintf(rename_command, sizeof(rename_command), "usermod -l %s %s", new_username, old_username);
 				system(rename_command);
 				printf("%s\n", rename_command);
@@ -158,7 +381,7 @@ void edit_user(GtkWidget *widget, gpointer data)
 			char *group = strtok((char *)new_groups, " ,");
 			while (group != NULL)
 			{
-				char add_to_group_command[4096];
+				char add_to_group_command[ML];
 				snprintf(add_to_group_command, sizeof(add_to_group_command), "usermod -a -G %s %s", group, new_username);
 				system(add_to_group_command);
 					printf("%s\n", add_to_group_command);
@@ -191,7 +414,7 @@ void edit_user(GtkWidget *widget, gpointer data)
 
 		if (confirm_response == GTK_RESPONSE_YES)
 		{
-			char command[4096];
+			char command[ML];
 			snprintf(command, sizeof(command), "userdel %s", old_username);
 			system(command);
 			printf("%s\n", command);
@@ -230,7 +453,7 @@ void edit_user(GtkWidget *widget, gpointer data)
 		if (password_response == GTK_RESPONSE_ACCEPT)
 		{
 			const gchar *new_password = gtk_entry_get_text(GTK_ENTRY(password_entry));
-			gchar command[4096];
+			gchar command[ML];
 			snprintf(command, sizeof(command), "echo '%s:%s' | chpasswd", old_username, new_password);
 			system(command);
 			printf("%s\n", command);
@@ -298,7 +521,7 @@ if (response == GTK_RESPONSE_ACCEPT)
 	const char *new_username = gtk_entry_get_text(GTK_ENTRY(entry_name));
 	const char *new_groups = gtk_entry_get_text(GTK_ENTRY(entry_groups));
 	const char *new_passwd = gtk_entry_get_text(GTK_ENTRY(entry_passwd));
-	char modified_groups[4096];
+	char modified_groups[ML];
 	size_t len = strlen(new_groups);
 	size_t j = 0;
 
@@ -313,11 +536,11 @@ if (response == GTK_RESPONSE_ACCEPT)
 			modified_groups[j++] = new_groups[i];
 		}
 	}
-	modified_groups[j] = '\0'; // Null-terminate the modified_groups string
+	modified_groups[j] = '\0';
 
 	if (strcmp(new_username, "") != 0)
 	{
-		char command[4096];
+		char command[ML];
 		if (strcmp(modified_groups, "") != 0)
 		{
 			snprintf(command, sizeof(command), "useradd -m -G %s %s", modified_groups, new_username);
@@ -386,7 +609,7 @@ gboolean read_group_info(GPtrArray *group_array)
 			return FALSE;
 		}
 
-	char line[1024];
+	char line[ML];
 	while (fgets(line, sizeof(line), group_file))
 		{
 			gchar **tokens = g_strsplit(line, ":", -1);
@@ -491,7 +714,7 @@ void on_submenu_item4_selected(GtkWidget *widget, gpointer data)
 	if (password_response == GTK_RESPONSE_ACCEPT)
 	{
 		const gchar *new_password = gtk_entry_get_text(GTK_ENTRY(password_entry));
-		gchar command[4096];
+		gchar command[ML];
 		snprintf(command, sizeof(command), "echo 'root:%s' | chpasswd", new_password);
 		system(command);
 		printf("%s\n", command);

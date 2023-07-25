@@ -10,17 +10,21 @@ LIBS = `pkg-config --libs gtk+-3.0` -lm
 
 # File names
 
-SRC = sgusers.c
+SRC = sgusers.c sgusers-uie.c
 
 OBJ = $(SRC:.c=.o)
 
-EXE = sgusers
+EXE = sgusers sgusers-uie
 
 # Build executable files
 
 all: $(EXE)
 
 sgusers: sgusers.o
+
+	$(CC) $(CFLAGS) -o $@ $< $(LIBS)
+
+sgusers-uie: sgusers-uie.o
 
 	$(CC) $(CFLAGS) -o $@ $< $(LIBS)
 
@@ -35,6 +39,8 @@ debug:
 test:
 
 	./sgusers
+
+	./sgusers-uie
 
 # Clean object files and executables
 

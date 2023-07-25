@@ -18,9 +18,9 @@ for(int i = 1; i < argc; i++)
 	{
 		pm = argv[0];
 	}
-	else 
+	else
 	{
-		pm = "sgrandr";
+		pm = "sgusers";
 	}
 
 	GPtrArray *group_array = g_ptr_array_new_with_free_func(free_group_info);
@@ -104,7 +104,7 @@ GtkWidget *grid;
 
 	GtkWidget *button_add = gtk_button_new_with_label("Add Users");
 	g_signal_connect(button_add, "clicked", G_CALLBACK(add_user), NULL);
-	gtk_grid_attach(GTK_GRID(grid), button_add, 0, 0, 2, 1);
+	gtk_grid_attach(GTK_GRID(grid), button_add, 0, 0, 3, 1);
 
 	FILE *fp;
 	char buffer[256];
@@ -126,11 +126,14 @@ GtkWidget *grid;
 
 				GtkWidget *button_rename = gtk_button_new_with_label("Edit");
 				g_signal_connect(button_rename, "clicked", G_CALLBACK(edit_user), user_name);
+				GtkWidget *button_edit = gtk_button_new_with_label("Info");
+				g_signal_connect(button_edit, "clicked", G_CALLBACK(uie), user_name);
 
 				GtkWidget *label = gtk_label_new(label_text);
 
 				gtk_grid_attach(GTK_GRID(grid), label, 0, row, 1, 1);
 				gtk_grid_attach(GTK_GRID(grid), button_rename, 1, row, 1, 1);
+				gtk_grid_attach(GTK_GRID(grid), button_edit, 2, row, 1, 1);
 				row++;
 			}
 		}
