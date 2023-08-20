@@ -322,7 +322,7 @@ void uie(GtkWidget *widget, gpointer data)
 {
 	const char *old_username = (const char *)data;
 	char* path1 = "/usr/bin/sgusers-uie";
-	char* path2 = "sgusers-uie";
+	char* path2 = "./sgusers-uie";
 	char command[100];
 
 	snprintf(command, sizeof(command), "%s %s", "/usr/bin/sgusers-uie", old_username);
@@ -334,7 +334,7 @@ void uie(GtkWidget *widget, gpointer data)
 	}
 	else if (access("sgusers-uie", X_OK) == 0)
 	{
-		snprintf(command, sizeof(command), "%s %s", "sgusers-uie", old_username);
+		snprintf(command, sizeof(command), "%s %s", "./sgusers-uie", old_username);
 		printf("executing %s\n", command);
 		system(command);
 	}

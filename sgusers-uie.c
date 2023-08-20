@@ -4,7 +4,7 @@ char checkusername[ML];
 
 int main(int argc, char *argv[])
 {
-	get_username(&*argvusername);
+get_username(&*argvusername);
 int nocsd = 0;
 
 for(int i = 1; i < argc; i++)
@@ -40,7 +40,7 @@ snprintf(checkusername, sizeof(checkusername), "id %s", *argvusername);
 	if (WIFEXITED(idintegrity))
 	{
 		int exit_status = WEXITSTATUS(idintegrity);
-		if (exit_status == 0) 
+		if (exit_status == 0)
 		{
 			printf("Valid user.\n");
 		}
@@ -49,7 +49,7 @@ snprintf(checkusername, sizeof(checkusername), "id %s", *argvusername);
 			printf("Error, not valid user in system.\n");
 			return 1;
 		}
-	} 
+	}
 	else
 	{
 		printf("Failed to check user.\n");
@@ -70,11 +70,11 @@ snprintf(checkusername, sizeof(checkusername), "id %s", *argvusername);
 
 
 	gtk_init(&argc, &argv);
-	if (argc > 0) 
+	if (argc > 0)
 	{
 		pm = argv[0];
 	}
-	else 
+	else
 	{
 		pm = "sgusers";
 	}
@@ -94,7 +94,7 @@ snprintf(checkusername, sizeof(checkusername), "id %s", *argvusername);
 
 	GtkIconTheme *theme = gtk_icon_theme_get_default();
 	GtkIconInfo *info = gtk_icon_theme_lookup_icon(theme, "cs-user", 48, 0);
-	if (info != NULL) 
+	if (info != NULL)
 	{
 		GdkPixbuf *icon = gtk_icon_info_load_icon(info, NULL);
 		gtk_window_set_icon(GTK_WINDOW(window), icon);
@@ -196,25 +196,25 @@ GtkWidget *grid;
 
 	gtk_grid_attach(GTK_GRID(grid), fname_label, 0, 1, 2, 1);
 	gtk_grid_attach(GTK_GRID(grid), fname_entry, 0, 2, 2, 1);
-	
+
 	gtk_grid_attach(GTK_GRID(grid), phone_label, 0, 3, 1, 1);
 	gtk_grid_attach(GTK_GRID(grid), phone_entry, 0, 4, 1, 1);
-	
+
 	gtk_grid_attach(GTK_GRID(grid), email_label, 1, 3, 1, 1);
 	gtk_grid_attach(GTK_GRID(grid), email_entry, 1, 4, 1, 1);
-	
+
 	gtk_grid_attach(GTK_GRID(grid), office_label, 0, 5, 1, 1);
 	gtk_grid_attach(GTK_GRID(grid), office_entry, 0, 6, 1, 1);
-	
+
 	gtk_grid_attach(GTK_GRID(grid), ofn_label, 1, 5, 1, 1);
 	gtk_grid_attach(GTK_GRID(grid), ofn_entry, 1, 6, 1, 1);
 	gtk_grid_attach(GTK_GRID(grid), ApplyBTN, 0, 7, 2, 2);
-	
+
 	if (nocsd)
 	{
 		gtk_grid_attach(GTK_GRID(grid), propic, 0, 0, 2, 1);
 	}
-	
+
 	g_object_set_data(G_OBJECT(fname_entry), "phone_entry", phone_entry);
 	g_object_set_data(G_OBJECT(fname_entry), "email_entry", email_entry);
 	g_object_set_data(G_OBJECT(fname_entry), "office_entry", office_entry);
@@ -222,7 +222,7 @@ GtkWidget *grid;
 
 	// Connect the button's "clicked" signal to the save data function
 	g_signal_connect(G_OBJECT(ApplyBTN), "clicked", G_CALLBACK(uie_savedata), (gpointer)fname_entry);
-	
+
 	g_signal_connect(propic, "clicked", G_CALLBACK(on_pfimage_clicked), propic);
 	g_signal_connect(submenu_item1, "activate", G_CALLBACK(on_pfimage_clicked), button);
 	//g_signal_connect(submenu_item2, "activate", G_CALLBACK(restart_program), pm);
@@ -236,14 +236,14 @@ GtkWidget *grid;
 
 	gtk_window_set_position(GTK_WINDOW(window), GTK_WIN_POS_CENTER);
 	gtk_widget_show_all(window);
-	
+
 	if (!is_user_root())
 	{
 		show_error_dialog(window);
 		gtk_widget_destroy(window);
 		return 1;
 	}
-	
+
 	gtk_main();
 	g_ptr_array_free(group_array, TRUE);
 	return 0;
