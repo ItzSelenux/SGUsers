@@ -27,34 +27,34 @@ typedef struct
 
 
 static gboolean is_valid_char_ws(gunichar ch) {
-    return (g_unichar_isalnum(ch) || ch == '_') && (g_unichar_islower(ch));
+	return (g_unichar_isalnum(ch) || ch == '_') && (g_unichar_islower(ch));
 }
 
 static void on_entry_changed_ws(GtkEditable *editable, gpointer user_data) {
-    const gchar *text = gtk_entry_get_text(GTK_ENTRY(editable));
-    gchar *new_text = g_strdup(text);
-    gint i, j;
-    gboolean last_char_space = FALSE;
+	const gchar *text = gtk_entry_get_text(GTK_ENTRY(editable));
+	gchar *new_text = g_strdup(text);
+	gint i, j;
+	gboolean last_char_space = FALSE;
 
-    for (i = 0, j = 0; text[i]; i++) {
-        if (is_valid_char_ws(text[i])) {
-            new_text[j] = text[i];
-            last_char_space = FALSE;
-            j++;
-        } else if (!last_char_space) {
-            new_text[j] = ' ';
-            last_char_space = TRUE;
-            j++;
-        }
-    }
+	for (i = 0, j = 0; text[i]; i++) {
+		if (is_valid_char_ws(text[i])) {
+			new_text[j] = text[i];
+			last_char_space = FALSE;
+			j++;
+		} else if (!last_char_space) {
+			new_text[j] = ' ';
+			last_char_space = TRUE;
+			j++;
+		}
+	}
 
-    new_text[j] = '\0';
+	new_text[j] = '\0';
 
-    if (strcmp(text, new_text) != 0) {
-        gtk_entry_set_text(GTK_ENTRY(editable), new_text);
-    }
+	if (strcmp(text, new_text) != 0) {
+		gtk_entry_set_text(GTK_ENTRY(editable), new_text);
+	}
 
-    g_free(new_text);
+	g_free(new_text);
 }
 
 
@@ -321,28 +321,26 @@ void restart_program(GtkWidget *widget, gpointer data)
 void uie(GtkWidget *widget, gpointer data)
 {
 	const char *old_username = (const char *)data;
-	char* path1 = "/usr/bin/sgusers-uie";
-	char* path2 = "./sgusers-uie";
 	char command[100];
 
-	snprintf(command, sizeof(command), "%s %s", "/usr/bin/sgusers-uie", old_username);
-	
-	if (access(command, X_OK) == 0)
+	if (access("/bin/sgusers-uie", X_OK) == 0)
 	{
-		printf("executing %s\n", command);
-		system(command);
+		snprintf(command, sizeof(command), "/bin/sgusers-uie %s", old_username);
 	}
-	else if (access("sgusers-uie", X_OK) == 0)
+	else if (access("./sgusers-uie", X_OK) == 0)
 	{
-		snprintf(command, sizeof(command), "%s %s", "./sgusers-uie", old_username);
-		printf("executing %s\n", command);
-		system(command);
+		snprintf(command, sizeof(command), "./sgusers-uie %s", old_username);
 	}
-	else 
+	else
 	{
 		printf("Error: can't load sgusers-uie, please reinstall this program\n");
+		return;
 	}
+
+	printf("Executing %s\n", command);
+	system(command);
 }
+
 
 
 
