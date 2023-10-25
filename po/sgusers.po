@@ -1,0 +1,182 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR ItzSelenux
+# This file is distributed under the same license as the sgusers package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: sgusers 0.1\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2023-10-25 19:27-0300\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: sgusers.c:74 sgusers.c:75
+msgid "Users Management"
+msgstr "Administración de usuarios"
+
+#: sgusers.c:85 sgusers.c:86
+msgid "See system's groups list"
+msgstr "Ver la lista de grupos del sistema"
+
+#: sgusers.c:86 sgusers.c:87
+msgid "Reload Program"
+msgstr "Recargar programa"
+
+#: sgusers.c:87 sgusers.c:88
+msgid "Manage root account"
+msgstr "Administrar cuenta root"
+
+#: sgusers.c:88 sgusers.c:89 sgusers-uie.c:134
+msgid "About"
+msgstr "Acerca de"
+
+#: sgusers.c:119 sgusers.c:120
+msgid "Add Users"
+msgstr "Añadir usuarios"
+
+#: sgusers.c:141 sgusers.c:142
+msgid "Edit"
+msgstr "Editar"
+
+#: sgusers.c:143 sgusers.c:144
+msgid "Info"
+msgstr "Info"
+
+#: sgusers-uie.c:121
+msgid "Users Info Editor"
+msgstr "Editor de info. del usuario"
+
+#: sgusers-uie.c:132
+msgid "Change Profile Picture"
+msgstr "Cambiar foto de perfil"
+
+#: sgusers-uie.c:133
+msgid "Clear User"
+msgstr "Limpiar usuario"
+
+#: sgusers-uie.c:174
+msgid "Full Name:"
+msgstr "Nombre completo:"
+
+#: sgusers-uie.c:178
+msgid "Phone Number:"
+msgstr "Número de teléfono:"
+
+#: sgusers-uie.c:182
+msgid "Email Address:"
+msgstr "Dirección de correo electrónico:"
+
+#: sgusers-uie.c:186
+msgid "Office:"
+msgstr "Oficina:"
+
+#: sgusers-uie.c:188
+msgid "Example Corporation"
+msgstr "Corporación de ejemplo"
+
+#: sgusers-uie.c:190
+msgid "Office Number:"
+msgstr "Número de oficina:"
+
+#: sgusers-uie.c:194 sgusers.h:372
+msgid "Save"
+msgstr "Guardar"
+
+#: sgusers.h:260
+msgid "Select an image"
+msgstr "Seleccionar una imagen"
+
+#: sgusers.h:263
+msgid "_Cancel"
+msgstr "_Cancelar"
+
+#: sgusers.h:265
+msgid "_Open"
+msgstr "_Abrir"
+
+#: sgusers.h:321
+msgid "Error: You need to be root to use this program."
+msgstr "_Error: Necesitas ser root para usar este programa."
+
+#: sgusers.h:367
+msgid "Edit user"
+msgstr "Editar usuario"
+
+#: sgusers.h:374 sgusers.h:523
+msgid "Change Password"
+msgstr "Cambiar contraseña"
+
+#: sgusers.h:376
+msgid "Delete User"
+msgstr "Eliminar usuario"
+
+#: sgusers.h:378 sgusers.h:527 sgusers.h:584 sgusers.h:807
+msgid "Cancel"
+msgstr "Cancelar"
+
+#: sgusers.h:396 sgusers.h:599
+msgid "Username:"
+msgstr "Nombre de usuario:"
+
+#: sgusers.h:403 sgusers.h:607
+msgid "Groups:"
+msgstr "Grupos:"
+
+#: sgusers.h:496
+msgid "Are you sure you want to delete the user?"
+msgstr "¿Estás seguro de querer eliminar el usuario?"
+
+#: sgusers.h:526 sgusers.h:806
+msgid "Change"
+msgstr "Cambiar"
+
+#: sgusers.h:540
+msgid "Enter new password (left empty to disable):"
+msgstr "Ingrese la nueva contraseña (deje en blanco para deshabilitar)"
+
+#: sgusers.h:555
+msgid "Are you sure you want to change the password?"
+msgstr "¿Estás seguro de querer cambiar la contraseña?"
+
+#: sgusers.h:579
+msgid "Add new user"
+msgstr "Añadir nuevo usuario"
+
+#: sgusers.h:582
+msgid "OK"
+msgstr "OK"
+
+#: sgusers.h:614
+msgid "Password:"
+msgstr "Contraseña:"
+
+#: sgusers.h:619
+msgid "Password"
+msgstr "Contraseña"
+
+#: sgusers.h:695
+msgid "SGDE User Management Program"
+msgstr "SGDE Programa de administración de usuarios"
+
+#: sgusers.h:754
+msgid "System's Groups"
+msgstr "Grupos del sistema"
+
+#: sgusers.h:803
+msgid "Root Account"
+msgstr "Cuenta root"
+
+#: sgusers.h:821
+msgid "Change root password (left empty to disable):"
+msgstr "Cambiar contraseña de root (dejar en blanco para deshabilitar):"
+
+#: sgusers.h:837
+msgid "Are you sure you want to change the root password?"
+msgstr "¿Estás seguro de querer cambiar la contraseña de root?"
