@@ -1,5 +1,6 @@
 [Desktop Entry]
 Name=User Management
+Name[es]=Gestión de Usuarios
 Comment=Manage system users
 Exec=pkexec env DISPLAY=$DISPLAY XAUTHORITY=$XAUTHORITY dbus-launch sgusers
 Icon=preferences-system-users
