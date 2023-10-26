@@ -4,6 +4,7 @@ char checkusername[ML];
 
 int main(int argc, char *argv[])
 {
+locale();
 get_username(&*argvusername);
 int nocsd = 0;
 
@@ -116,17 +117,21 @@ snprintf(checkusername, sizeof(checkusername), "id %s", *argvusername);
 
 	// Create the title
 	GtkWidget *label = gtk_label_new(NULL);
-	gtk_label_set_markup(GTK_LABEL(label), "<b>Users Info Editor - SGUsers</b>");
+	const gchar *markupTitle = "<b>%s - SGUsers</b>";
+	const gchar *translatedTitle = _("Users Info Editor");
+	gchar *formattedMarkupTitle = g_markup_printf_escaped(markupTitle, translatedTitle);
+	gtk_label_set_markup(GTK_LABEL(label), formattedMarkupTitle);
 	gtk_header_bar_pack_start(GTK_HEADER_BAR(headerbar), label);
+	g_free(formattedMarkupTitle);
 
 	// Create the submenu
 	GtkWidget *submenu = gtk_menu_new();
 
 	// Create the submenu items
 
-	GtkWidget *submenu_item1 = gtk_menu_item_new_with_label("Change Profile Picture");
-	GtkWidget *submenu_item2 = gtk_menu_item_new_with_label("Clear User");
-	GtkWidget *submenu_item3 = gtk_menu_item_new_with_label("About");
+	GtkWidget *submenu_item1 = gtk_menu_item_new_with_label(_("Change Profile Picture"));
+	GtkWidget *submenu_item2 = gtk_menu_item_new_with_label(_("Clear User"));
+	GtkWidget *submenu_item3 = gtk_menu_item_new_with_label(_("About"));
 
 
 	// Add the submenu items to the submenu
@@ -166,27 +171,27 @@ GtkWidget *grid;
 		gtk_button_set_image(GTK_BUTTON(button), image);
 		g_object_unref(resized_pixbuf);
 
-	GtkWidget *fname_label = gtk_label_new("Full Name:");
+	GtkWidget *fname_label = gtk_label_new(_("Full Name:"));
 		GtkWidget *fname_entry = gtk_entry_new();
 		gtk_entry_set_placeholder_text(GTK_ENTRY(fname_entry), "Laura Dominguez");
 
-	GtkWidget *phone_label = gtk_label_new("Phone Number:");
+	GtkWidget *phone_label = gtk_label_new(_("Phone Number:"));
 		GtkWidget *phone_entry = gtk_entry_new();
 		gtk_entry_set_placeholder_text(GTK_ENTRY(phone_entry), "123456789");
 
-	GtkWidget *email_label = gtk_label_new("Email Address:");
+	GtkWidget *email_label = gtk_label_new(_("Email Address:"));
 		GtkWidget *email_entry  = gtk_entry_new();
 		gtk_entry_set_placeholder_text(GTK_ENTRY(email_entry), "user@example.com");
 
-	GtkWidget *office_label = gtk_label_new("Office:");
+	GtkWidget *office_label = gtk_label_new(_("Office:"));
 		GtkWidget *office_entry  = gtk_entry_new();
-		gtk_entry_set_placeholder_text(GTK_ENTRY(office_entry), "Example Corporation");
+		gtk_entry_set_placeholder_text(GTK_ENTRY(office_entry), _("Example Corporation"));
 
-	GtkWidget *ofn_label = gtk_label_new("Office Number:");
+	GtkWidget *ofn_label = gtk_label_new(_("Office Number:"));
 		GtkWidget *ofn_entry  = gtk_entry_new();
 		gtk_entry_set_placeholder_text(GTK_ENTRY(ofn_entry), "123456789");
 
-	GtkWidget *ApplyBTN = gtk_button_new_with_label("Save");
+	GtkWidget *ApplyBTN = gtk_button_new_with_label(_("Save"));
 
 		gtk_entry_set_text(GTK_ENTRY(fname_entry), data.fname);
 		gtk_entry_set_text(GTK_ENTRY(phone_entry), data.phone);

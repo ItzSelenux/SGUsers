@@ -1,7 +1,18 @@
  #include "sgusers.h"
+/* #include "libintl.h"
+ #include "locale.h"
+
+#define _(String) gettext(String)
+#define GETTEXT_PACKAGE "sgusers"
+#define localedir "locale"*/
 
 int main(int argc, char *argv[])
 {
+locale();
+/*setlocale(LC_ALL, "");
+bindtextdomain(GETTEXT_PACKAGE, localedir);
+textdomain(GETTEXT_PACKAGE);*/
+
 int nocsd = 0;
 
 for(int i = 1; i < argc; i++)
@@ -60,18 +71,22 @@ for(int i = 1; i < argc; i++)
 
 	// Create the title
 	GtkWidget *label = gtk_label_new(NULL);
-	gtk_label_set_markup(GTK_LABEL(label), "<b>Users Management - SGUsers</b>");
+	const gchar *markupTitle = "<b>%s - SGUsers</b>";
+	const gchar *translatedTitle = _("Users Management");
+	gchar *formattedMarkupTitle = g_markup_printf_escaped(markupTitle, translatedTitle);
+	gtk_label_set_markup(GTK_LABEL(label), formattedMarkupTitle);
 	gtk_header_bar_pack_start(GTK_HEADER_BAR(headerbar), label);
+	g_free(formattedMarkupTitle);
 
 	// Create the submenu
 	GtkWidget *submenu = gtk_menu_new();
 
 	// Create the submenu items
 
-	GtkWidget *submenu_item1 = gtk_menu_item_new_with_label("See system's groups list");
-	GtkWidget *submenu_item2 = gtk_menu_item_new_with_label("Reload Program");
-	GtkWidget *submenu_item4 = gtk_menu_item_new_with_label("Manage root account");
-	GtkWidget *submenu_item3 = gtk_menu_item_new_with_label("About");
+	GtkWidget *submenu_item1 = gtk_menu_item_new_with_label(_("See system's groups list"));
+	GtkWidget *submenu_item2 = gtk_menu_item_new_with_label(_("Reload Program"));
+	GtkWidget *submenu_item4 = gtk_menu_item_new_with_label(_("Manage root account"));
+	GtkWidget *submenu_item3 = gtk_menu_item_new_with_label(_("About"));
 
 
 	// Add the submenu items to the submenu
@@ -102,7 +117,7 @@ GtkWidget *grid;
 	gtk_container_add(GTK_CONTAINER(window), grid);
 
 
-	GtkWidget *button_add = gtk_button_new_with_label("Add Users");
+	GtkWidget *button_add = gtk_button_new_with_label(_("Add Users"));
 	g_signal_connect(button_add, "clicked", G_CALLBACK(add_user), NULL);
 	gtk_grid_attach(GTK_GRID(grid), button_add, 0, 0, 3, 1);
 
@@ -124,9 +139,9 @@ GtkWidget *grid;
 				// handle different usernames
 				char *user_name = g_strdup(buffer);
 
-				GtkWidget *button_rename = gtk_button_new_with_label("Edit");
+				GtkWidget *button_rename = gtk_button_new_with_label(_("Edit"));
 				g_signal_connect(button_rename, "clicked", G_CALLBACK(edit_user), user_name);
-				GtkWidget *button_edit = gtk_button_new_with_label("Info");
+				GtkWidget *button_edit = gtk_button_new_with_label(_("Info"));
 				g_signal_connect(button_edit, "clicked", G_CALLBACK(uie), user_name);
 
 				GtkWidget *label = gtk_label_new(label_text);
