@@ -393,7 +393,7 @@ void edit_user(GtkWidget *widget, gpointer data)
 
 	GtkWidget *content_area = gtk_dialog_get_content_area(GTK_DIALOG(dialog));
 
-	GtkWidget *label0 = gtk_label_new(strcat(_("Username:"));
+	GtkWidget *label0 = gtk_label_new(_("Username:"));
 	gtk_container_add(GTK_CONTAINER(content_area), label0);
 
 	GtkWidget *entry = gtk_entry_new();
@@ -758,7 +758,7 @@ void on_submenu_item1_selected(GtkWidget *widget, gpointer data)
 	GtkIconTheme *theme = gtk_icon_theme_get_default();
 	GtkIconInfo *info = gtk_icon_theme_lookup_icon(theme, "user-group-properties", 48, 0);
 	gtk_window_set_position(GTK_WINDOW(window), GTK_WIN_POS_CENTER);
-	g_free(formatedMarkupTitle);
+	g_free(formattedMarkupTitle);
 
 	if (info != NULL) 
 	{
